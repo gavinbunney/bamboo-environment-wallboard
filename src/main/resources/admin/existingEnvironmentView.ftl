@@ -6,18 +6,22 @@
         <th>Name</th>
         <th>URL</th>
         <th>Auth</th>
+        <th>Wallboard</th>
     </tr>
     </thead>
 [#foreach environmentConfig in environmentConfigs]
     <tr>
         <td>
-        ${environmentConfig.name}
+            ${environmentConfig.name}
         </td>
         <td>
-        ${environmentConfig.url}
+            ${environmentConfig.url}
         </td>
         <td>
-        ${environmentConfig.auth}
+            ${environmentConfig.auth}
+        </td>
+        <td>
+            ${environmentConfig.wallboardName}
         </td>
 
         <td class="operations">

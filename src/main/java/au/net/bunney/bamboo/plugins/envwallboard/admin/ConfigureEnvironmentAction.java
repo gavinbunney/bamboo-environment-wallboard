@@ -30,8 +30,6 @@ import java.util.HashMap;
  */
 public class ConfigureEnvironmentAction extends BambooActionSupport {
 
-    private transient Logger log = Logger.getLogger(ConfigureEnvironmentAction.class);
-
     private String mode;
     private String testing;
 
@@ -39,6 +37,7 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
     private String name;
     private String url;
     private String auth;
+    private String wallboardName;
 
     private transient EnvironmentConfigManager environmentConfigManager;
 
@@ -77,7 +76,7 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         }
 
         environmentConfigManager.addEnvironmentConfiguration(
-                new EnvironmentConfig(-1, getName(), getUrl(), getAuth()));
+                new EnvironmentConfig(-1, getName(), getUrl(), getAuth(), getWallboardName()));
         return "success";
     }
 
@@ -89,6 +88,7 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         setName(environmentConfig.getName());
         setUrl(environmentConfig.getUrl());
         setAuth(environmentConfig.getAuth());
+        setWallboardName(environmentConfig.getWallboardName());
 
         return "input";
     }
@@ -100,7 +100,7 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         }
 
         environmentConfigManager.updateEnvironmentConfiguration(
-                new EnvironmentConfig(getEnvironmentId(), getName(), getUrl(), getAuth()));
+                new EnvironmentConfig(getEnvironmentId(), getName(), getUrl(), getAuth(), getWallboardName()));
         return "success";
     }
 
@@ -160,6 +160,14 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
 
     public void setAuth(String auth) {
         this.auth = auth;
+    }
+
+    public String getWallboardName() {
+        return wallboardName;
+    }
+
+    public void setWallboardName(String wallboardName) {
+        this.wallboardName = wallboardName;
     }
 
     private void testConnection() {

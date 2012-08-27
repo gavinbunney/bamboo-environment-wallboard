@@ -11,15 +11,17 @@ public class EnvironmentConfig implements Serializable {
     private String name;
     private String url;
     private String auth;
+    private String wallboardName;
 
     public EnvironmentConfig() {
     }
 
-    public EnvironmentConfig(long id, String name, String url, String auth) {
+    public EnvironmentConfig(long id, String name, String url, String auth, String wallboardName) {
         this.id = id;
         this.name = name;
         this.url = url;
         this.auth = auth;
+        this.wallboardName = wallboardName;
     }
 
     public EnvironmentConfig(EnvironmentConfig environmentConfig) {
@@ -27,6 +29,7 @@ public class EnvironmentConfig implements Serializable {
         this.name = environmentConfig.name;
         this.url = environmentConfig.url;
         this.auth = environmentConfig.auth;
+        this.wallboardName = environmentConfig.wallboardName;
     }
 
     public long getId() {
@@ -59,5 +62,13 @@ public class EnvironmentConfig implements Serializable {
 
     public void setAuth(String auth) {
         this.auth = auth;
+    }
+
+    public String getWallboardName() {
+        return wallboardName;
+    }
+
+    public void setWallboardName(String wallboardName) {
+        this.wallboardName = wallboardName;
     }
 }

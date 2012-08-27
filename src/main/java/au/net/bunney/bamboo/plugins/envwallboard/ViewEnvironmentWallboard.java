@@ -20,6 +20,7 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
 
     private EnvironmentConfigManager environmentConfigManager;
     private List<HashMap<String, String>> environments = new ArrayList<HashMap<String, String>>();
+    private String wallboardName;
     private ThreadGroup threadGroup = new ThreadGroup(THREAD_GROUP_NAME);
 
     public ViewEnvironmentWallboard(EnvironmentConfigManager environmentConfigManager) {
@@ -31,7 +32,7 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
     public String doDefault() throws Exception {
 
         // copy the environments into a friendly map for display
-        for (EnvironmentConfig environmentConfig : environmentConfigManager.getAllEnvironmentConfigs()) {
+        for (EnvironmentConfig environmentConfig : environmentConfigManager.getAllEnvironmentConfigs(getWallboardName())) {
             HashMap<String, String> env = new HashMap<String, String>();
             env.put("name", environmentConfig.getName());
             env.put("url", environmentConfig.getUrl());
@@ -110,6 +111,14 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
             log.info("Environment wallboard exception: " + e);
             environment.put("status", "dead");
         }
+    }
+
+    public String getWallboardName() {
+        return wallboardName;
+    }
+
+    public void setWallboardName(String wallboardName) {
+        this.wallboardName = wallboardName;
     }
 
     public List<HashMap<String, String>> getEnvironments() {

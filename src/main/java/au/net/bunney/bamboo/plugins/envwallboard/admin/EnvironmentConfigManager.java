@@ -1,16 +1,12 @@
 package au.net.bunney.bamboo.plugins.envwallboard.admin;
 
-import au.net.bunney.bamboo.plugins.envwallboard.admin.EnvironmentConfig;
 import com.atlassian.bamboo.bandana.PlanAwareBandanaContext;
 import com.atlassian.bamboo.security.StringEncrypter;
 import com.atlassian.bandana.BandanaManager;
-import com.atlassian.spring.container.ContainerManager;
 import com.google.common.collect.Lists;
-import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
@@ -19,8 +15,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Gavin Bunney
  */
 public class EnvironmentConfigManager implements Serializable {
-
-    private transient Logger log = Logger.getLogger(EnvironmentConfigManager.class);
 
     private transient BandanaManager bandanaManager;
     private static final String CONFIG_KEY = "au.net.bunney.bamboo.plugins.envwallboard.config";
@@ -33,6 +27,23 @@ public class EnvironmentConfigManager implements Serializable {
 
     public List<EnvironmentConfig> getAllEnvironmentConfigs() {
         return Lists.newArrayList(configuredEnvironments);
+    }
+
+    public List<EnvironmentConfig> getAllEnvironmentConfigs(String wallboardName) {
+        List<EnvironmentConfig> allConfigs = getAllEnvironmentConfigs();
+
+        if (wallboardName == null)
+            return allConfigs;
+
+        List<EnvironmentConfig> filteredConfigs = new ArrayList<EnvironmentConfig>();
+        for (EnvironmentConfig config : allConfigs) {
+            if (   (config.getWallboardName() != null)
+                && (config.getWallboardName().equals(wallboardName))) {
+                filteredConfigs.add(config);
+            }
+        }
+
+        return filteredConfigs;
     }
 
     public EnvironmentConfig getEnvironmentConfigById(long id) {
@@ -52,9 +63,7 @@ public class EnvironmentConfigManager implements Serializable {
     }
 
     public void deleteEnvironmentConfiguration(final long id) {
-        Iterator<EnvironmentConfig> configIterator = configuredEnvironments.iterator();
-        while (configIterator.hasNext()) {
-            EnvironmentConfig environmentConfig = configIterator.next();
+        for (EnvironmentConfig environmentConfig : configuredEnvironments) {
             if (environmentConfig.getId() == id) {
                 configuredEnvironments.remove(environmentConfig);
                 persist();
@@ -64,11 +73,12 @@ public class EnvironmentConfigManager implements Serializable {
     }
 
     public void updateEnvironmentConfiguration(EnvironmentConfig updated) {
-        for (EnvironmentConfig configuredServer : configuredEnvironments) {
-            if (configuredServer.getId() == updated.getId()) {
-                configuredServer.setName(updated.getName());
-                configuredServer.setUrl(updated.getUrl());
-                configuredServer.setAuth(updated.getAuth());
+        for (EnvironmentConfig configuredEnvironment : configuredEnvironments) {
+            if (configuredEnvironment.getId() == updated.getId()) {
+                configuredEnvironment.setName(updated.getName());
+                configuredEnvironment.setUrl(updated.getUrl());
+                configuredEnvironment.setAuth(updated.getAuth());
+                configuredEnvironment.setWallboardName(updated.getWallboardName());
                 persist();
                 break;
             }
@@ -96,7 +106,8 @@ public class EnvironmentConfigManager implements Serializable {
             configuredEnvironments.add(new EnvironmentConfig(configId,
                     (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".name"),
                     (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".url"),
-                    stringEncrypter.decrypt((String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".auth"))));
+                    stringEncrypter.decrypt((String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".auth")),
+                    (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".wallboardName")));
         }
     }
 
@@ -113,6 +124,7 @@ public class EnvironmentConfigManager implements Serializable {
             bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".name", environmentConfig.getName());
             bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".url", environmentConfig.getUrl());
             bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".auth", stringEncrypter.encrypt(environmentConfig.getAuth()));
+            bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".wallboardName", environmentConfig.getWallboardName());
             idx++;
         }
     }

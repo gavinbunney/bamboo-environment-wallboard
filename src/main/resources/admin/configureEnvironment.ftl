@@ -42,6 +42,9 @@ showActionErrors='false']
     [@ww.textfield labelKey='Auth' name="auth" showPassword="true"
     descriptionKey="Basic authentication username/password in format of 'username:password'. Leave empty if anonymous is enabled."/]
 
+    [@ww.textfield labelKey='Wallboard Name' name="wallboardName"
+    descriptionKey="Name of the Wallboard to display this environment on. Leave empty for default wallboard."/]
+
 [/@ww.form]
 [#if mode=='edit']
 </body></html>
