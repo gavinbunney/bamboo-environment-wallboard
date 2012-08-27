@@ -21,7 +21,7 @@
         </td>
 
         <td class="operations">
-            <a id="editEnvironment-${environmentConfig.id}" href="[@ww.url action='editEnvironment' serverId=environmentConfig.id/]">
+            <a id="editEnvironment-${environmentConfig.id}" href="[@ww.url action='editEnvironment' id=environmentConfig.id/]">
                 Edit
             </a>
             |

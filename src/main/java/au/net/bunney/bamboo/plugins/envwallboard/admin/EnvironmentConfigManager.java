@@ -1,5 +1,6 @@
 package au.net.bunney.bamboo.plugins.envwallboard.admin;
 
+import au.net.bunney.bamboo.plugins.envwallboard.admin.EnvironmentConfig;
 import com.atlassian.bamboo.bandana.PlanAwareBandanaContext;
 import com.atlassian.bamboo.security.StringEncrypter;
 import com.atlassian.bandana.BandanaManager;
@@ -8,6 +9,7 @@ import com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -25,10 +27,8 @@ public class EnvironmentConfigManager implements Serializable {
     private final List<EnvironmentConfig> configuredEnvironments = new CopyOnWriteArrayList<EnvironmentConfig>();
     private AtomicLong nextAvailableId = new AtomicLong(0);
 
-    public static EnvironmentConfigManager getInstance() {
-        EnvironmentConfigManager EnvironmentConfigManager = new EnvironmentConfigManager();
-        ContainerManager.autowireComponent(EnvironmentConfigManager);
-        return EnvironmentConfigManager;
+    public EnvironmentConfigManager(BandanaManager bandanaManager) {
+        setBandanaManager(bandanaManager);
     }
 
     public List<EnvironmentConfig> getAllEnvironmentConfigs() {
@@ -78,23 +78,25 @@ public class EnvironmentConfigManager implements Serializable {
     public void setBandanaManager(BandanaManager bandanaManager) {
         this.bandanaManager = bandanaManager;
 
-        Object existingConfigs = bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, CONFIG_KEY);
-        if (existingConfigs != null) {
+        Object existingConfigs = bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, CONFIG_KEY, true);
 
-            List<EnvironmentConfig> environmentConfigList = (List<EnvironmentConfig>) existingConfigs;
-            StringEncrypter stringEncrypter = new StringEncrypter();
-
-            for (EnvironmentConfig environmentConfig : environmentConfigList) {
-                if (nextAvailableId.get() <= environmentConfig.getId()) {
-                    nextAvailableId.set(environmentConfig.getId() + 1);
-                }
-
-                configuredEnvironments.add(new EnvironmentConfig(environmentConfig.getId(),
-                                                                 environmentConfig.getName(),
-                                                                 environmentConfig.getUrl(),
-                                                                 stringEncrypter.decrypt(environmentConfig.getAuth())));
-            }
-        }
+        //TODO: fix loading - some weird class loader issues where casting is failing for EnvironmentConfig
+//        if (existingConfigs != null) {
+//
+//            ArrayList<EnvironmentConfig> environmentConfigList = (ArrayList<EnvironmentConfig>) existingConfigs;
+//            StringEncrypter stringEncrypter = new StringEncrypter();
+//
+//            for (EnvironmentConfig environmentConfig : environmentConfigList) {
+//                if (nextAvailableId.get() <= environmentConfig.getId()) {
+//                    nextAvailableId.set(environmentConfig.getId() + 1);
+//                }
+//
+//                configuredEnvironments.add(new EnvironmentConfig(environmentConfig.getId(),
+//                                                                 environmentConfig.getName(),
+//                                                                 environmentConfig.getUrl(),
+//                                                                 stringEncrypter.decrypt(environmentConfig.getAuth())));
+//            }
+//        }
     }
 
     private synchronized void persist() {
