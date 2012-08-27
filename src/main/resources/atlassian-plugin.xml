@@ -1,4 +1,4 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+ <atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
@@ -8,8 +8,6 @@
         <param name="plugin-logo">pluginLogo.png</param>
         <param name="plugin-banner">pluginBanner.png</param>
     </plugin-info>
-
-    <resource type="i18n" name="au.net.bunney.bamboo.plugins language" location="english"/>
 
     <xwork key="viewEnvironmentWallboard" name="View Environment Wallboard">
         <package name="wallboardPlugin" extends="default">
@@ -27,7 +25,6 @@
     <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate"/>
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
     <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider" />
-    <component-import key="renderer" interface="com.atlassian.templaterenderer.velocity.one.six.VelocityTemplateRenderer" />
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
 
     <template-context-item key="applicationPropertiesContextItem" component-ref="applicationProperties"

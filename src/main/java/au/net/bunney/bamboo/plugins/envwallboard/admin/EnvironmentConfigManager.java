@@ -78,38 +78,42 @@ public class EnvironmentConfigManager implements Serializable {
     public void setBandanaManager(BandanaManager bandanaManager) {
         this.bandanaManager = bandanaManager;
 
-        Object existingConfigs = bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, CONFIG_KEY, true);
+        Integer configCount = (Integer)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, CONFIG_KEY + ".count");
+        if (configCount == null)
+            return;
 
-        //TODO: fix loading - some weird class loader issues where casting is failing for EnvironmentConfig
-//        if (existingConfigs != null) {
-//
-//            ArrayList<EnvironmentConfig> environmentConfigList = (ArrayList<EnvironmentConfig>) existingConfigs;
-//            StringEncrypter stringEncrypter = new StringEncrypter();
-//
-//            for (EnvironmentConfig environmentConfig : environmentConfigList) {
-//                if (nextAvailableId.get() <= environmentConfig.getId()) {
-//                    nextAvailableId.set(environmentConfig.getId() + 1);
-//                }
-//
-//                configuredEnvironments.add(new EnvironmentConfig(environmentConfig.getId(),
-//                                                                 environmentConfig.getName(),
-//                                                                 environmentConfig.getUrl(),
-//                                                                 stringEncrypter.decrypt(environmentConfig.getAuth())));
-//            }
-//        }
+        StringEncrypter stringEncrypter = new StringEncrypter();
+
+        for (int idx = 0; idx < configCount; ++idx) {
+
+            String environmentKey = CONFIG_KEY + "." + idx;
+
+            Long configId = (Long)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".id");
+            if (nextAvailableId.get() <= configId) {
+                nextAvailableId.set(configId + 1);
+            }
+
+            configuredEnvironments.add(new EnvironmentConfig(configId,
+                    (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".name"),
+                    (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".url"),
+                    stringEncrypter.decrypt((String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".auth"))));
+        }
     }
 
     private synchronized void persist() {
+
+        bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, CONFIG_KEY + ".count", configuredEnvironments.size());
+
         StringEncrypter stringEncrypter = new StringEncrypter();
-        List<EnvironmentConfig> environmentConfigs = Lists.newArrayList();
-
+        int idx = 0;
         for (EnvironmentConfig environmentConfig : configuredEnvironments) {
-            environmentConfigs.add(new EnvironmentConfig(environmentConfig.getId(),
-                                                         environmentConfig.getName(),
-                                                         environmentConfig.getUrl(),
-                                                         stringEncrypter.encrypt(environmentConfig.getAuth())));
-        }
+            String environmentKey = CONFIG_KEY + "." + idx;
 
-        bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, CONFIG_KEY, environmentConfigs);
+            bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".id", environmentConfig.getId());
+            bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".name", environmentConfig.getName());
+            bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".url", environmentConfig.getUrl());
+            bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".auth", stringEncrypter.encrypt(environmentConfig.getAuth()));
+            idx++;
+        }
     }
 }

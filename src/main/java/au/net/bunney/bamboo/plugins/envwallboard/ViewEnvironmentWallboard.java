@@ -44,8 +44,8 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
 
             Runnable runnableBlock = new Runnable() {
                 public void run() {
-                    connect(environment);
-                    log.debug(String.format("%s - Completed", threadName));
+                connect(environment);
+                log.debug(String.format("%s - Completed", threadName));
                 }
             };
 
@@ -64,7 +64,7 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
         return SUCCESS;
     }
 
-    protected void connect(HashMap<String, String> environment) {
+    public static void connect(HashMap<String, String> environment) {
         try {
             URL url = new URL(environment.get("url"));
             HttpURLConnection yc = (HttpURLConnection) url.openConnection();

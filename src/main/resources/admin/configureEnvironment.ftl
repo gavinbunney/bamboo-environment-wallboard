@@ -18,21 +18,22 @@
 titleKey='Environment Details'
 cancelUri=cancelUri
 descriptionKey='Configure an Environment for display on the wallboard.
-If anonymous user is enabled in server, you can leave the auth empty'
+If anonymous user is enabled in server, you can leave the auth empty.'
 showActionErrors='false']
 
     [@ww.param name='buttons']
     [@ww.submit value="Test" name="testing" theme='simple' /]
     [/@ww.param]
         [#if actionErrors?? && (actionErrors.size()>0)]
-        <div class="warningBox">
+        <div class="aui-message error">
             [#foreach error in formattedActionErrors]
-                                ${error}
-                        [/#foreach]
+                <p>${error}</p>
+            [/#foreach]
+            <span class="aui-icon icon-error"></span>
         </div>
         [/#if]
 
-    [@ww.textfield labelKey='Name' name="name"
+    [@ww.textfield labelKey='Name' name="name" required="true"
     descriptionKey="Name of the environment"/]
 
     [@ww.textfield labelKey='URL' name="url" required="true"

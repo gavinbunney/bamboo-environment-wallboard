@@ -16,12 +16,14 @@
 
 package au.net.bunney.bamboo.plugins.envwallboard.admin;
 
+import au.net.bunney.bamboo.plugins.envwallboard.ViewEnvironmentWallboard;
 import com.atlassian.bamboo.ww2.BambooActionSupport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * @author Gavin Bunney
@@ -33,7 +35,7 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
     private String mode;
     private String testing;
 
-    private long id;
+    private long environmentId;
     private String name;
     private String url;
     private String auth;
@@ -62,7 +64,6 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
                 addFieldError("url", "Please specify a valid URL of the environment.");
             }
         }
-
     }
 
     public String doAdd() throws Exception {
@@ -71,6 +72,7 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
 
     public String doCreate() throws Exception {
         if (isTesting()) {
+            testConnection();
             return "input";
         }
 
@@ -80,9 +82,9 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
     }
 
     public String doEdit() throws Exception {
-        EnvironmentConfig environmentConfig = environmentConfigManager.getEnvironmentConfigById(id);
+        EnvironmentConfig environmentConfig = environmentConfigManager.getEnvironmentConfigById(environmentId);
         if (environmentConfig == null) {
-            throw new IllegalArgumentException("Could not find environment configuration by the ID " + id);
+            throw new IllegalArgumentException("Could not find environment configuration by the ID " + environmentId);
         }
         setName(environmentConfig.getName());
         setUrl(environmentConfig.getUrl());
@@ -93,16 +95,17 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
 
     public String doUpdate() throws Exception {
         if (isTesting()) {
+            testConnection();
             return "input";
         }
 
         environmentConfigManager.updateEnvironmentConfiguration(
-                new EnvironmentConfig(getId(), getName(), getUrl(), getAuth()));
+                new EnvironmentConfig(getEnvironmentId(), getName(), getUrl(), getAuth()));
         return "success";
     }
 
     public String doDelete() throws Exception {
-        environmentConfigManager.deleteEnvironmentConfiguration(getId());
+        environmentConfigManager.deleteEnvironmentConfiguration(getEnvironmentId());
 
         return "success";
     }
@@ -127,12 +130,12 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         this.testing = testing;
     }
 
-    public long getId() {
-        return id;
+    public long getEnvironmentId() {
+        return environmentId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setEnvironmentId(long environmentId) {
+        this.environmentId = environmentId;
     }
 
     public String getName() {
@@ -157,5 +160,19 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
 
     public void setAuth(String auth) {
         this.auth = auth;
+    }
+
+    private void testConnection() {
+
+        HashMap<String, String> environmentMap = new HashMap<String, String>();
+        environmentMap.put("url", url);
+        environmentMap.put("auth", auth);
+        ViewEnvironmentWallboard.connect(environmentMap);
+
+        if (environmentMap.get("status").equals("alive")) {
+            addActionMessage("Connection successful!");
+        } else {
+            addActionError("Connection failed - check the url and the build file exists");
+        }
     }
 }

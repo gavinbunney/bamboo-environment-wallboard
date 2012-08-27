@@ -21,12 +21,12 @@
         </td>
 
         <td class="operations">
-            <a id="editEnvironment-${environmentConfig.id}" href="[@ww.url action='editEnvironment' id=environmentConfig.id/]">
+            <a id="editEnvironment-${environmentConfig.id}" href="[@ww.url action='editEnvironment' environmentId=environmentConfig.id/]">
                 Edit
             </a>
             |
             <a id="deleteEnvironment-${environmentConfig.id}"
-               href="[@ww.url action='deleteEnvironment' serverId=environmentConfig.id/]"
+               href="[@ww.url action='deleteEnvironment' environmentId=environmentConfig.id/]"
                onclick='return confirm("Are you sure you wish to remove this configuration?")'>
                 Delete
             </a>
@@ -34,5 +34,3 @@
     </tr>
 [/#foreach]
 </table>
-
-[#--[@cp.entityPagination actionUrl='${req.contextPath}/admin/manageEnvironments.action?' paginationSupport=paginationSupport /]--]

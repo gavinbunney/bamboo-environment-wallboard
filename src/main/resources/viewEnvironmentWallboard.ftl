@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>[@ww.text name='au.net.bunney.bamboo.plugins.envwallboard.title' /]</title>
+    <title>Environment Wallboard</title>
 
     <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -55,7 +55,7 @@
             <div class="environment" style="width: ${boxWidth};">
                 <div class="down">
                     <div class="name">${environment.name}</div>
-                    <div class="build">[@ww.text name='au.net.bunney.bamboo.plugins.envwallboard.status.dead'/]</div>
+                    <div class="build">down</div>
                     <div class="details">&nbsp;</div>
                 </div>
             </div>
