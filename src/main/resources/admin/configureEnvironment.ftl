@@ -18,7 +18,7 @@
 titleKey='Environment Details'
 cancelUri=cancelUri
 descriptionKey='Configure an Environment for display on the wallboard.
-If anonymous user is enabled in server, you can leave the auth empty.'
+If anonymous access is enabled, you can leave the auth empty.'
 showActionErrors='false']
 
     [@ww.param name='buttons']
