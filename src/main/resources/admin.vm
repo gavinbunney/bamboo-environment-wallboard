@@ -1,0 +1,36 @@
+<html>
+<head>
+    <title>$i18n.getText("au.net.bunney.bamboo.plugins.envwallboard.admin.label")</title>
+
+    <meta name="decorator" content="atl.admin">
+    <meta name="application-base-url" content="$applicationProperties.getBaseUrl()">
+
+    ${webResourceManager.requireResource("au.net.bunney.bamboo.plugins.bamboo-environment-wallboard:environment-wallboard-admin-resources")}
+</head>
+<body>
+    <h1>$i18n.getText("au.net.bunney.bamboo.plugins.envwallboard.admin.label")</h1>
+
+    <form id="adminForm" class="aui">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>$i18n.getText("au.net.bunney.bamboo.plugins.envwallboard.admin.name.label")</th>
+                    <th>$i18n.getText("au.net.bunney.bamboo.plugins.envwallboard.admin.url.label")</th>
+                    <th>$i18n.getText("au.net.bunney.bamboo.plugins.envwallboard.admin.auth.label")</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" id="name" name="name" class="text"></td>
+                    <td><input type="text" id="url" name="url" class="text"></td>
+                    <td><input type="text" id="auth" name="auth" class="text"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <input type="submit" value="$i18n.getText("au.net.bunney.bamboo.plugins.envwallboard.admin.save.label")" class="button">
+        </div>
+    </form>
+</body>
+</html>

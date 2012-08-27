@@ -1,0 +1,54 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+
+        <param name="plugin-icon">pluginIcon.png</param>
+        <param name="plugin-logo">pluginLogo.png</param>
+        <param name="plugin-banner">pluginBanner.png</param>
+    </plugin-info>
+
+    <resource type="i18n" name="au.net.bunney.bamboo.plugins language" location="english"/>
+
+    <xwork key="viewEnvironmentWallboard" name="View Environment Wallboard">
+        <package name="wallboardPlugin" extends="default">
+            <action name="viewEnvironmentWallboard" class="au.net.bunney.bamboo.plugins.envwallboard.ViewEnvironmentWallboard" method="default">
+                <result name="success" type="freemarker">/viewEnvironmentWallboard.ftl</result>
+            </action>
+        </package>
+    </xwork>
+
+    <web-resource key="environment-wallboard-resources" name="Environment Wallboard Resources">
+        <resource type="download" name="environment-wallboard.css" location="environment-wallboard.css"/>
+    </web-resource>
+
+    <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
+    <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate"/>
+    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
+    <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider" />
+    <component-import key="renderer" interface="com.atlassian.templaterenderer.velocity.one.six.VelocityTemplateRenderer" />
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
+
+    <template-context-item key="applicationPropertiesContextItem" component-ref="applicationProperties"
+                           context-key="applicationProperties" name="Application Properties Context Item"/>
+
+    <web-resource key="environment-wallboard-admin-resources" name="Environment Wallboard Admin Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <resource type="download" name="admin.js" location="admin.js"/>
+    </web-resource>
+
+    <servlet key="admin-servlet" class="au.net.bunney.bamboo.plugins.envwallboard.EnvironmentWallboardAdminServlet">
+        <url-pattern>/envwallboard/admin</url-pattern>
+    </servlet>
+
+    <rest key="rest" path="/envwallboard-admin" version="1.0">
+        <description>Provides REST resources for the admin UI</description>
+    </rest>
+
+    <web-item key="bamboo-menu-item" name="Environment Wallboard Admin" section="system.admin/plugins" weight="10" application="bamboo">
+        <description>Link to environment wallboard admin page.</description>
+        <label key="Environment Wallboard Admin"/>
+        <link linkId="envwallboard-admin-link">/plugins/servlet/envwallboard/admin</link>
+    </web-item>
+</atlassian-plugin>
