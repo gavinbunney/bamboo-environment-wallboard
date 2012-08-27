@@ -33,22 +33,51 @@
     <template-context-item key="applicationPropertiesContextItem" component-ref="applicationProperties"
                            context-key="applicationProperties" name="Application Properties Context Item"/>
 
-    <web-resource key="environment-wallboard-admin-resources" name="Environment Wallboard Admin Resources">
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <resource type="download" name="admin.js" location="admin.js"/>
-    </web-resource>
+    <component name="Environment Configuration Management Component" key="environmentConfigManager"
+               class="au.net.bunney.bamboo.plugins.envwallboard.admin.EnvironmentConfigManager" />
 
-    <servlet key="admin-servlet" class="au.net.bunney.bamboo.plugins.envwallboard.EnvironmentWallboardAdminServlet">
-        <url-pattern>/envwallboard/admin</url-pattern>
-    </servlet>
+    <xwork key="manageEnvironmentsAdmin" name="Environment Wallboard Plugin Admin">
+        <package name="environmentWallboardPluginAdmin" extends="admin">
+            <action name="manageEnvironments" class="au.net.bunney.bamboo.plugins.envwallboard.admin.ManageEnvironmentsAction">
+                <result name="input" type="freemarker">/admin/manageEnvironments.ftl</result>
+                <result name="success" type="freemarker">/admin/manageEnvironments.ftl</result>
+            </action>
+            <action name="existingEnvironment" class="au.net.bunney.bamboo.plugins.envwallboard.admin.ExistingEnvironmentAction"
+                    method="browse">
+                <result name="success" type="freemarker">existingEnvironmentView.ftl</result>
+            </action>
+            <action name="configureEnvironment" class="au.net.bunney.bamboo.plugins.envwallboard.admin.ConfigureEnvironmentAction">
+                <result name="input" type="freemarker">/admin/configureEnvironment.ftl</result>
+                <result name="success" type="freemarker">/admin/configureEnvironment.ftl</result>
+            </action>
+            <action name="createEnvironment" class="au.net.bunney.bamboo.plugins.envwallboard.admin.ConfigureEnvironmentAction" method="create">
+                <result name="input" type="freemarker">/admin/manageEnvironments.ftl</result>
+                <result name="success" type="redirect-action">
+                    <param name="actionName">manageEnvironments</param>
+                </result>
+            </action>
+            <action name="editEnvironment" class="au.net.bunney.bamboo.plugins.envwallboard.admin.ConfigureEnvironmentAction" method="edit">
+                <result name="input" type="freemarker">/admin/configureEnvironment.ftl</result>
+                <param name="mode">edit</param>
+            </action>
+            <action name="updateEnvironment" class="au.net.bunney.bamboo.plugins.envwallboard.admin.ConfigureEnvironmentAction" method="update">
+                <result name="input" type="freemarker">/admin/configureEnvironment.ftl</result>
+                <result name="success" type="redirect-action">
+                    <param name="actionName">manageEnvironments</param>
+                </result>
+                <param name="mode">edit</param>
+            </action>
+            <action name="deleteEnvironment" class="au.net.bunney.bamboo.plugins.envwallboard.admin.ConfigureEnvironmentAction" method="delete">
+                <result name="error" type="freemarker">/admin/manageEnvironments.ftl</result>
+                <result name="success" type="freemarker">/admin/manageEnvironments.ftl</result>
+            </action>
+        </package>
+    </xwork>
 
-    <rest key="rest" path="/envwallboard-admin" version="1.0">
-        <description>Provides REST resources for the admin UI</description>
-    </rest>
-
-    <web-item key="bamboo-menu-item" name="Environment Wallboard Admin" section="system.admin/plugins" weight="10" application="bamboo">
+    <web-item key="manageEnvironmentsMenuItem" name="Environment Wallboard" section="system.admin/Plugins" weight="10">
+        <label key="Environment Wallboard"/>
         <description>Link to environment wallboard admin page.</description>
-        <label key="Environment Wallboard Admin"/>
-        <link linkId="envwallboard-admin-link">/plugins/servlet/envwallboard/admin</link>
+        <link linkId="manageArtifactoryServersMenuItem">/admin/manageEnvironments.action</link>
     </web-item>
+
 </atlassian-plugin>

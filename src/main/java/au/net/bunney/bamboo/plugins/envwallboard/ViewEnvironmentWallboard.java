@@ -1,5 +1,7 @@
 package au.net.bunney.bamboo.plugins.envwallboard;
 
+import au.net.bunney.bamboo.plugins.envwallboard.admin.EnvironmentConfig;
+import au.net.bunney.bamboo.plugins.envwallboard.admin.EnvironmentConfigManager;
 import com.atlassian.bamboo.ww2.BambooActionSupport;
 import org.apache.log4j.Logger;
 
@@ -16,11 +18,26 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
     private static final int DEFAULT_SECONDS_BEFORE_NEXT_REFRESH = 15;
     private int secondsBeforeNextRefresh = DEFAULT_SECONDS_BEFORE_NEXT_REFRESH;
 
+    private EnvironmentConfigManager environmentConfigManager;
     private List<HashMap<String, String>> environments = new ArrayList<HashMap<String, String>>();
     private ThreadGroup threadGroup = new ThreadGroup(THREAD_GROUP_NAME);
 
+    public ViewEnvironmentWallboard(EnvironmentConfigManager environmentConfigManager) {
+        super();
+        this.environmentConfigManager = environmentConfigManager;
+    }
+
     @Override
     public String doDefault() throws Exception {
+
+        // copy the environments into a friendly map for display
+        for (EnvironmentConfig environmentConfig : environmentConfigManager.getAllEnvironmentConfigs()) {
+            HashMap<String, String> env = new HashMap<String, String>();
+            env.put("name", environmentConfig.getName());
+            env.put("url", environmentConfig.getUrl());
+            env.put("auth", environmentConfig.getAuth());
+            environments.add(env);
+        }
 
         for (final HashMap<String, String> environment : environments) {
             final String threadName = environment.get("name");
