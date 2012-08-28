@@ -31,7 +31,7 @@
     </plugin-info>
 
     <xwork key="viewEnvironmentWallboard" name="View Environment Wallboard">
-        <package name="wallboardPlugin" extends="default">
+        <package name="environmentWallboardPlugin" extends="default">
             <action name="viewEnvironmentWallboard" class="au.net.bunney.bamboo.plugins.envwallboard.ViewEnvironmentWallboard" method="default">
                 <result name="success" type="freemarker">/viewEnvironmentWallboard.ftl</result>
             </action>
