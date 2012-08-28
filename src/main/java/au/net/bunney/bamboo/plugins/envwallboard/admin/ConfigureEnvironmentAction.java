@@ -215,4 +215,12 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
     public void setDisplayWidth(Double displayWidth) {
         this.displayWidth = displayWidth;
     }
+
+    public String getDisplayPriorityString() {
+        return displayPriority != null ? displayPriority.toString() : "";
+    }
+
+    public String getDisplayWidthString() {
+        return displayWidth != null ? displayWidth.toString() + "%" : "";
+    }
 }

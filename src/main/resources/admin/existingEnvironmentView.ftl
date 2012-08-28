@@ -59,10 +59,10 @@
             ${environmentConfig.wallboardName}
         </td>
         <td>
-            ${environmentConfig.displayPriority}
+            ${environmentConfig.displayPriorityString}
         </td>
         <td>
-            ${environmentConfig.displayWidth}
+            ${environmentConfig.displayWidthString}
         </td>
 
         <td class="operations">
