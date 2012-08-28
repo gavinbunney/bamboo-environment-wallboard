@@ -19,7 +19,7 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
     private int secondsBeforeNextRefresh = DEFAULT_SECONDS_BEFORE_NEXT_REFRESH;
 
     private EnvironmentConfigManager environmentConfigManager;
-    private List<HashMap<String, String>> environments = new ArrayList<HashMap<String, String>>();
+    private List<EnvironmentDetails> environments = new ArrayList<EnvironmentDetails>();
     private String wallboardName;
     private ThreadGroup threadGroup = new ThreadGroup(THREAD_GROUP_NAME);
 
@@ -31,18 +31,12 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
     @Override
     public String doDefault() throws Exception {
 
-        // copy the environments into a friendly map for display
         for (EnvironmentConfig environmentConfig : environmentConfigManager.getAllEnvironmentConfigs(getWallboardName())) {
-            HashMap<String, String> env = new HashMap<String, String>();
-            env.put("name", environmentConfig.getName());
-            env.put("url", environmentConfig.getUrl());
-            env.put("auth", environmentConfig.getAuth());
-            env.put("displayWidth", (environmentConfig.getDisplayWidth() != null ? environmentConfig.getDisplayWidth().toString() : "0") + "%");
-            environments.add(env);
+            environments.add(new EnvironmentDetails(environmentConfig));
         }
 
-        for (final HashMap<String, String> environment : environments) {
-            final String threadName = environment.get("name");
+        for (final EnvironmentDetails environment : environments) {
+            final String threadName = environment.getName();
 
             Runnable runnableBlock = new Runnable() {
                 public void run() {
@@ -66,12 +60,12 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
         return SUCCESS;
     }
 
-    public static void connect(HashMap<String, String> environment) {
+    public static void connect(EnvironmentDetails environment) {
         try {
-            URL url = new URL(environment.get("url"));
+            URL url = new URL(environment.getUrl());
             HttpURLConnection yc = (HttpURLConnection) url.openConnection();
 
-            String usernamePassword = environment.get("auth");
+            String usernamePassword = environment.getAuth();
             if (usernamePassword != null) {
                 String encoded = new sun.misc.BASE64Encoder().encode(usernamePassword.getBytes());
                 yc.setRequestProperty("Authorization", "Basic " + encoded);
@@ -100,17 +94,17 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
                     }
                 }
 
-                environment.put("status", "alive");
-                environment.put("buildNumber", buildDetails.get("buildNumber"));
-                environment.put("buildTimeStamp", buildDetails.get("buildTimeStamp"));
-                environment.put("buildRevision", buildDetails.get("buildRevision"));
+                environment.setStatus("alive");
+                environment.setBuildNumber(buildDetails.get("buildNumber"));
+                environment.setBuildTimeStamp(buildDetails.get("buildTimeStamp"));
+                environment.setBuildRevision(buildDetails.get("buildRevision"));
             } finally {
                 scanner.close();
             }
 
         } catch (Exception e) {
             log.info("Environment wallboard exception: " + e);
-            environment.put("status", "dead");
+            environment.setStatus("dead");
         }
     }
 
@@ -122,7 +116,7 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
         this.wallboardName = wallboardName;
     }
 
-    public List<HashMap<String, String>> getEnvironments() {
+    public List<EnvironmentDetails> getEnvironments() {
         return environments;
     }
 
