@@ -3,13 +3,6 @@
 
 Bamboo plugin for showing details of your environments on a wallboard.
 
-Features:
-- green indicators for showing alive environments
-- grey showing those environments that are down / unreachable
-- multiple environments & wallboards (groups of environments)
-- custom priorities and display width - give emphasis on certain environments
-- display properties to allow any number of tiles combinations
-
 ![Bamboo Environment Wallboard](https://raw.github.com/gavinbunney/bamboo-environment-wallboard/master/src/main/resources/pluginBanner.png)
 
 
