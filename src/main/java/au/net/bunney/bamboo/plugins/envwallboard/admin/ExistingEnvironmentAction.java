@@ -21,6 +21,7 @@ import com.atlassian.bamboo.ww2.actions.admin.user.AbstractEntityPagerSupport;
 import com.atlassian.bamboo.ww2.aware.permissions.GlobalAdminSecurityAware;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Gavin Bunney
@@ -44,5 +45,16 @@ public class ExistingEnvironmentAction extends AbstractEntityPagerSupport implem
 
     public List<EnvironmentConfig> getEnvironmentConfigs() {
         return environmentConfigManager.getAllEnvironmentConfigs();
+    }
+
+    public Set<String> getWallboardNames() {
+        return environmentConfigManager.getAllWallboardNames();
+    }
+
+    public String getWallboardUrl(String wallboardName) {
+        if (wallboardName == null)
+            return String.format("%s/viewEnvironmentWallboard.action", this.getBamboo().getAdministrationConfiguration().getBaseUrl());
+
+        return String.format("%s/viewEnvironmentWallboard.action?wallboardName=%s", this.getBamboo().getAdministrationConfiguration().getBaseUrl(), wallboardName);
     }
 }

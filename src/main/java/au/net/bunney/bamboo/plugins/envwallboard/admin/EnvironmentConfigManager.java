@@ -4,12 +4,10 @@ import com.atlassian.bamboo.bandana.PlanAwareBandanaContext;
 import com.atlassian.bamboo.security.StringEncrypter;
 import com.atlassian.bandana.BandanaManager;
 import com.google.common.collect.Lists;
+import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -29,6 +27,19 @@ public class EnvironmentConfigManager implements Serializable {
 
     public List<EnvironmentConfig> getAllEnvironmentConfigs() {
         return Lists.newArrayList(configuredEnvironments);
+    }
+
+    public Set<String> getAllWallboardNames() {
+
+        HashSet<String> wallboards = new HashSet<String>();
+        List<EnvironmentConfig> allConfigs = getAllEnvironmentConfigs();
+        for (EnvironmentConfig config : allConfigs) {
+            if (StringUtils.isBlank(config.getWallboardName()))
+                continue;
+
+            wallboards.add(config.getWallboardName());
+        }
+        return wallboards;
     }
 
     public List<EnvironmentConfig> getAllEnvironmentConfigs(String wallboardName) {
