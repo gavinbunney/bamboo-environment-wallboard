@@ -33,6 +33,11 @@ showActionErrors='false']
         </div>
         [/#if]
 
+    [#if mode == 'edit' ]
+        [#--[@ww.textfield labelKey='Environment Id' name="environmentId" disabled="true"/]--]
+        [@ww.hidden  name="environmentId"/]
+    [/#if]
+
     [@ww.textfield labelKey='Name' name="name" required="true"
     descriptionKey="Name of the environment"/]
 
@@ -45,6 +50,11 @@ showActionErrors='false']
     [@ww.textfield labelKey='Wallboard Name' name="wallboardName"
     descriptionKey="Name of the Wallboard to display this environment on. Leave empty for default wallboard."/]
 
+    [@ww.textfield labelKey='Display Priority' name="displayPriority"
+    descriptionKey="Priority ordering for display - 1 is high."/]
+
+    [@ww.textfield labelKey='Display Width (%)' name="displayWidth"
+    descriptionKey="Optional display width to override the default display percentage"/]
 [/@ww.form]
 [#if mode=='edit']
 </body></html>

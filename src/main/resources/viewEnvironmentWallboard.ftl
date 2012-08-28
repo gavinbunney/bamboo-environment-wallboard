@@ -26,6 +26,7 @@
     </div>
 
 [#else]
+
     [#if environments.size() == 1]
         [#assign boxWidth = "100%"]
     [#elseif environments.size() == 2]
@@ -43,7 +44,7 @@
     [#list environments as environment]
 
         [#if environment.status.equals('alive')]
-            <div class="environment" style="width: ${boxWidth};">
+            <div class="environment" style="width: [#if environment.displayWidth == "0%"] ${boxWidth} [#else] ${environment.displayWidth} [/#if];">
                 <div class="up">
                     <div class="name">${environment.name}</div>
                     <div class="build">${environment.buildNumber}</div>
@@ -52,7 +53,7 @@
                 </div>
             </div>
         [#else]
-            <div class="environment" style="width: ${boxWidth};">
+            <div class="environment" style="width: [#if environment.displayWidth == "0%"] ${boxWidth} [#else] ${environment.displayWidth} [/#if];">
                 <div class="down">
                     <div class="name">${environment.name}</div>
                     <div class="build">down</div>

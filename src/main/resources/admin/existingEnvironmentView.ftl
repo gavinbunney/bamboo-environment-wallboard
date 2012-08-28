@@ -7,6 +7,8 @@
         <th>URL</th>
         <th>Auth</th>
         <th>Wallboard</th>
+        <th>Display Priority</th>
+        <th>Display Width</th>
     </tr>
     </thead>
 [#foreach environmentConfig in environmentConfigs]
@@ -22,6 +24,12 @@
         </td>
         <td>
             ${environmentConfig.wallboardName}
+        </td>
+        <td>
+            ${environmentConfig.displayPriority}
+        </td>
+        <td>
+            ${environmentConfig.displayWidth}
         </td>
 
         <td class="operations">

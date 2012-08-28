@@ -37,6 +37,7 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
             env.put("name", environmentConfig.getName());
             env.put("url", environmentConfig.getUrl());
             env.put("auth", environmentConfig.getAuth());
+            env.put("displayWidth", (environmentConfig.getDisplayWidth() != null ? environmentConfig.getDisplayWidth().toString() : "0") + "%");
             environments.add(env);
         }
 

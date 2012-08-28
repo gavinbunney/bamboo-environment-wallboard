@@ -19,7 +19,6 @@ package au.net.bunney.bamboo.plugins.envwallboard.admin;
 import au.net.bunney.bamboo.plugins.envwallboard.ViewEnvironmentWallboard;
 import com.atlassian.bamboo.ww2.BambooActionSupport;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,6 +37,8 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
     private String url;
     private String auth;
     private String wallboardName;
+    private Integer displayPriority;
+    private Double displayWidth;
 
     private transient EnvironmentConfigManager environmentConfigManager;
 
@@ -52,6 +53,12 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
 
         if (StringUtils.isBlank(name)) {
             addFieldError("name", "Please specify a name for the environment.");
+        }
+
+        if (   (displayWidth != null)
+            && (   (displayWidth <= 0)
+                || (displayWidth > 100))) {
+            addFieldError("displayWidth", "Display width must be blank or between 0 and 100.");
         }
 
         if (StringUtils.isBlank(url)) {
@@ -76,7 +83,7 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         }
 
         environmentConfigManager.addEnvironmentConfiguration(
-                new EnvironmentConfig(-1, getName(), getUrl(), getAuth(), getWallboardName()));
+                new EnvironmentConfig(-1, getName(), getUrl(), getAuth(), getWallboardName(), getDisplayPriority(), getDisplayWidth()));
         return "success";
     }
 
@@ -85,10 +92,13 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         if (environmentConfig == null) {
             throw new IllegalArgumentException("Could not find environment configuration by the ID " + environmentId);
         }
+        setEnvironmentId(environmentConfig.getId());
         setName(environmentConfig.getName());
         setUrl(environmentConfig.getUrl());
         setAuth(environmentConfig.getAuth());
         setWallboardName(environmentConfig.getWallboardName());
+        setDisplayPriority(environmentConfig.getDisplayPriority());
+        setDisplayWidth(environmentConfig.getDisplayWidth());
 
         return "input";
     }
@@ -100,7 +110,7 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         }
 
         environmentConfigManager.updateEnvironmentConfiguration(
-                new EnvironmentConfig(getEnvironmentId(), getName(), getUrl(), getAuth(), getWallboardName()));
+                new EnvironmentConfig(getEnvironmentId(), getName(), getUrl(), getAuth(), getWallboardName(), getDisplayPriority(), getDisplayWidth()));
         return "success";
     }
 
@@ -108,6 +118,20 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         environmentConfigManager.deleteEnvironmentConfiguration(getEnvironmentId());
 
         return "success";
+    }
+
+    private void testConnection() {
+
+        HashMap<String, String> environmentMap = new HashMap<String, String>();
+        environmentMap.put("url", url);
+        environmentMap.put("auth", auth);
+        ViewEnvironmentWallboard.connect(environmentMap);
+
+        if (environmentMap.get("status").equals("alive")) {
+            addActionMessage("Connection successful!");
+        } else {
+            addActionError("Connection failed - check the url and the build file exists");
+        }
     }
 
     public String getMode() {
@@ -170,17 +194,19 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
         this.wallboardName = wallboardName;
     }
 
-    private void testConnection() {
+    public Integer getDisplayPriority() {
+        return displayPriority;
+    }
 
-        HashMap<String, String> environmentMap = new HashMap<String, String>();
-        environmentMap.put("url", url);
-        environmentMap.put("auth", auth);
-        ViewEnvironmentWallboard.connect(environmentMap);
+    public void setDisplayPriority(Integer displayPriority) {
+        this.displayPriority = displayPriority;
+    }
 
-        if (environmentMap.get("status").equals("alive")) {
-            addActionMessage("Connection successful!");
-        } else {
-            addActionError("Connection failed - check the url and the build file exists");
-        }
+    public Double getDisplayWidth() {
+        return displayWidth;
+    }
+
+    public void setDisplayWidth(Double displayWidth) {
+        this.displayWidth = displayWidth;
     }
 }

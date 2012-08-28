@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,18 +34,39 @@ public class EnvironmentConfigManager implements Serializable {
     public List<EnvironmentConfig> getAllEnvironmentConfigs(String wallboardName) {
         List<EnvironmentConfig> allConfigs = getAllEnvironmentConfigs();
 
-        if (wallboardName == null)
-            return allConfigs;
-
-        List<EnvironmentConfig> filteredConfigs = new ArrayList<EnvironmentConfig>();
-        for (EnvironmentConfig config : allConfigs) {
-            if (   (config.getWallboardName() != null)
-                && (config.getWallboardName().equals(wallboardName))) {
-                filteredConfigs.add(config);
+        if (wallboardName != null) {
+            List<EnvironmentConfig> filteredConfigs = new ArrayList<EnvironmentConfig>();
+            for (EnvironmentConfig config : allConfigs) {
+                if (   (config.getWallboardName() != null)
+                    && (config.getWallboardName().equals(wallboardName))) {
+                    filteredConfigs.add(config);
+                }
             }
+            allConfigs = filteredConfigs;
         }
 
-        return filteredConfigs;
+        Collections.sort(allConfigs, new Comparator<EnvironmentConfig>() {
+            @Override
+            public int compare(EnvironmentConfig envConfig1, EnvironmentConfig envConfig2) {
+                if (   (envConfig1.getDisplayPriority() == null)
+                    && (envConfig2.getDisplayPriority() == null))
+                    return -1;
+                else if (   (envConfig1.getDisplayPriority() != null)
+                         && (envConfig2.getDisplayPriority() == null))
+                    return -1;
+                else if (   (envConfig1.getDisplayPriority() == null)
+                         && (envConfig2.getDisplayPriority() != null))
+                    return 1;
+                else if (envConfig1.getDisplayPriority() < envConfig2.getDisplayPriority())
+                    return -1;
+                else if (envConfig1.getDisplayPriority() > envConfig2.getDisplayPriority())
+                    return 1;
+                else
+                    return 0;
+            }
+        });
+
+        return allConfigs;
     }
 
     public EnvironmentConfig getEnvironmentConfigById(long id) {
@@ -79,6 +102,8 @@ public class EnvironmentConfigManager implements Serializable {
                 configuredEnvironment.setUrl(updated.getUrl());
                 configuredEnvironment.setAuth(updated.getAuth());
                 configuredEnvironment.setWallboardName(updated.getWallboardName());
+                configuredEnvironment.setDisplayPriority(updated.getDisplayPriority());
+                configuredEnvironment.setDisplayWidth(updated.getDisplayWidth());
                 persist();
                 break;
             }
@@ -107,7 +132,10 @@ public class EnvironmentConfigManager implements Serializable {
                     (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".name"),
                     (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".url"),
                     stringEncrypter.decrypt((String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".auth")),
-                    (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".wallboardName")));
+                    (String)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".wallboardName"),
+                    (Integer)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".displayPriority"),
+                    (Double)bandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".displayWidth")
+                    ));
         }
     }
 
@@ -125,6 +153,8 @@ public class EnvironmentConfigManager implements Serializable {
             bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".url", environmentConfig.getUrl());
             bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".auth", stringEncrypter.encrypt(environmentConfig.getAuth()));
             bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".wallboardName", environmentConfig.getWallboardName());
+            bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".displayPriority", environmentConfig.getDisplayPriority());
+            bandanaManager.setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, environmentKey + ".displayWidth", environmentConfig.getDisplayWidth());
             idx++;
         }
     }

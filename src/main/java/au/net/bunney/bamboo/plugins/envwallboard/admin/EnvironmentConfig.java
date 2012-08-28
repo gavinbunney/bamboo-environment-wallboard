@@ -13,15 +13,20 @@ public class EnvironmentConfig implements Serializable {
     private String auth;
     private String wallboardName;
 
+    private Integer displayPriority;
+    private Double displayWidth;
+
     public EnvironmentConfig() {
     }
 
-    public EnvironmentConfig(long id, String name, String url, String auth, String wallboardName) {
+    public EnvironmentConfig(long id, String name, String url, String auth, String wallboardName, Integer displayPriority, Double displayWidth) {
         this.id = id;
         this.name = name;
         this.url = url;
         this.auth = auth;
         this.wallboardName = wallboardName;
+        this.displayPriority = displayPriority;
+        this.displayWidth = displayWidth;
     }
 
     public EnvironmentConfig(EnvironmentConfig environmentConfig) {
@@ -30,6 +35,8 @@ public class EnvironmentConfig implements Serializable {
         this.url = environmentConfig.url;
         this.auth = environmentConfig.auth;
         this.wallboardName = environmentConfig.wallboardName;
+        this.displayPriority = environmentConfig.displayPriority;
+        this.displayWidth = environmentConfig.displayWidth;
     }
 
     public long getId() {
@@ -70,5 +77,21 @@ public class EnvironmentConfig implements Serializable {
 
     public void setWallboardName(String wallboardName) {
         this.wallboardName = wallboardName;
+    }
+
+    public Integer getDisplayPriority() {
+        return displayPriority;
+    }
+
+    public void setDisplayPriority(Integer displayPriority) {
+        this.displayPriority = displayPriority;
+    }
+
+    public Double getDisplayWidth() {
+        return displayWidth;
+    }
+
+    public void setDisplayWidth(Double displayWidth) {
+        this.displayWidth = displayWidth;
     }
 }
