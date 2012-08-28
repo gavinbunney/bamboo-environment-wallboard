@@ -14,7 +14,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 
-    ${webResourceManager.requireResource("au.net.bunney.bamboo.plugins.bamboo-environment-wallboard:environment-wallboard-resources")}
+    ${webResourceManager.requireResource("au.net.bunney.bamboo.plugins.environment-wallboard:environment-wallboard-resources")}
     ${webResourceManager.requiredResources}
 </head>
 <body>

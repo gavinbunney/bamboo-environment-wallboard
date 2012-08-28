@@ -1,2 +1,2 @@
-bamboo-environment-wallboard
+environment-wallboard
 ============================

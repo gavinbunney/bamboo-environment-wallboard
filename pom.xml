@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>au.net.bunney.bamboo.plugins</groupId>
-    <artifactId>bamboo-environment-wallboard</artifactId>
+    <artifactId>environment-wallboard</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <organization>
@@ -14,7 +14,7 @@
         <url>http://bunney.net.au/</url>
     </organization>
 
-    <name>Bamboo Environment Wallboard</name>
+    <name>Environment Wallboard</name>
     <description>Wallboard to display details about development/test/production environments</description>
     <packaging>atlassian-plugin</packaging>
 
