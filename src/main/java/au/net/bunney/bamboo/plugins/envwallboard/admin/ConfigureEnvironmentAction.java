@@ -21,6 +21,7 @@
 
 package au.net.bunney.bamboo.plugins.envwallboard.admin;
 
+import au.net.bunney.bamboo.plugins.envwallboard.EnvironmentDetails;
 import au.net.bunney.bamboo.plugins.envwallboard.ViewEnvironmentWallboard;
 import com.atlassian.bamboo.ww2.BambooActionSupport;
 import org.apache.commons.lang.StringUtils;
@@ -127,12 +128,12 @@ public class ConfigureEnvironmentAction extends BambooActionSupport {
 
     private void testConnection() {
 
-        HashMap<String, String> environmentMap = new HashMap<String, String>();
-        environmentMap.put("url", url);
-        environmentMap.put("auth", auth);
-        ViewEnvironmentWallboard.connect(environmentMap);
+        EnvironmentDetails testDetails = new EnvironmentDetails();
+        testDetails.setUrl(url);
+        testDetails.setAuth(auth);
+        ViewEnvironmentWallboard.connect(testDetails);
 
-        if (environmentMap.get("status").equals("alive")) {
+        if (testDetails.getStatus().equals("alive")) {
             addActionMessage("Connection successful!");
         } else {
             addActionError("Connection failed - check the url and the build file exists");
