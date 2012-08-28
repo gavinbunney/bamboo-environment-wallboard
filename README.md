@@ -1,8 +1,3 @@
-# Bamboo Environment Wallboard
-====================================
-
-Bamboo plugin for showing details of your environments on a wallboard.
-
 ![Bamboo Environment Wallboard](https://raw.github.com/gavinbunney/bamboo-environment-wallboard/master/src/main/resources/pluginBanner.png)
 
 
