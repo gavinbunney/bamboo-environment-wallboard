@@ -29,20 +29,21 @@ import org.apache.log4j.Logger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ViewEnvironmentWallboard extends BambooActionSupport {
 
     private static final Logger log = Logger.getLogger(ViewEnvironmentWallboard.class);
 
-    private static final String THREAD_GROUP_NAME = "ViewEnvironmentWallboardThreadGroup";
+    private static final int THREADS_COUNT = 10;
 
     private static final int DEFAULT_SECONDS_BEFORE_NEXT_REFRESH = 15;
     private int secondsBeforeNextRefresh = DEFAULT_SECONDS_BEFORE_NEXT_REFRESH;
 
     private EnvironmentConfigManager environmentConfigManager;
-    private List<EnvironmentDetails> environments = new ArrayList<EnvironmentDetails>();
+    private List<EnvironmentDetails> environments;
     private String wallboardName;
-    private ThreadGroup threadGroup = new ThreadGroup(THREAD_GROUP_NAME);
 
     public ViewEnvironmentWallboard(EnvironmentConfigManager environmentConfigManager) {
         super();
@@ -52,31 +53,29 @@ public class ViewEnvironmentWallboard extends BambooActionSupport {
     @Override
     public String doDefault() throws Exception {
 
+        environments = new ArrayList<EnvironmentDetails>();
         for (EnvironmentConfig environmentConfig : environmentConfigManager.getAllEnvironmentConfigs(getWallboardName())) {
             environments.add(new EnvironmentDetails(environmentConfig));
         }
 
+        ExecutorService executor = Executors.newFixedThreadPool(THREADS_COUNT);
+
         for (final EnvironmentDetails environment : environments) {
-            final String threadName = environment.getName();
+            final String environmentName = environment.getName();
 
             Runnable runnableBlock = new Runnable() {
                 public void run() {
                 connect(environment);
-                log.debug(String.format("%s - Completed", threadName));
+                log.debug(String.format("%s - Completed", environmentName));
                 }
             };
 
-            Thread childRunner = new Thread(threadGroup, runnableBlock, "");
-            log.debug(String.format("Start thread runner '%s'", threadName ));
-            childRunner.start();
+            executor.execute(runnableBlock);
+            log.debug(String.format("Start runnable for '%s'", environmentName ));
         }
 
-        // wait for all the child threads to finish
-        Thread[] childThreads = new Thread[threadGroup.activeCount()];
-        threadGroup.enumerate(childThreads);
-        for (Thread childThread : childThreads) {
-            childThread.join();
-        }
+        executor.shutdown();
+        while (!executor.isTerminated()) { }
 
         return SUCCESS;
     }
